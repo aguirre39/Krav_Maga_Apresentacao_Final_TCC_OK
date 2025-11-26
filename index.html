@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krav Maga Woman</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+    <!-- ====== LOADER GLOBAL ====== -->
+    <div id="loader" class="loader" style="display: none;" role="status" aria-live="polite">
+        <span class="visually-hidden">Carregando...</span>
+    </div>
+
+    <!-- ====== ESTRUTURA DOS MODAIS ====== -->
+    <!-- Modal: Notificações Genéricas -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalTitle">Notificação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="messageText"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal: Link de Rastreamento de Emergência -->
+    <div class="modal fade" id="emergencyLinkModal" tabindex="-1" aria-labelledby="emergencyLinkModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="emergencyLinkModalTitle"><i class="fas fa-share-alt me-2"></i>Compartilhe seu Trajeto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Seu link de acompanhamento está pronto.</strong> Compartilhe-o manualmente com seus contatos de confiança para que possam seguir seu trajeto em tempo real.</p>
+                    <div class="input-group">
+                        <input type="text" id="trackingLinkInput" class="form-control" readonly aria-label="Link de Rastreamento">
+                        <button class="btn btn-outline-secondary" type="button" id="copyLinkButton"><i class="fas fa-copy me-2"></i>Copiar</button>
+                        <button class="btn btn-success" type="button" id="shareButton"><i class="fas fa-share-alt me-2"></i>Compartilhar</button>
+                    </div>
+                    <small id="copyStatus" class="form-text text-muted-light mt-1"></small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Resposta da Verificação de Segurança (do Contato) -->
+    <div class="modal fade" id="safetyCheckResponseModal" tabindex="-1" aria-labelledby="safetyCheckResponseModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" id="safetyCheckResponseModalHeader">
+                    <h5 class="modal-title" id="safetyCheckResponseModalTitle">Resposta do Contato</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i id="safetyCheckResponseModalIcon" class="fas fa-3x mb-3"></i>
+                    <p id="safetyCheckResponseModalText" class="lead"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- NOVO MODAL: Verificação de Segurança da Usuária -->
+    <div class="modal fade" id="userSafetyCheckModal" tabindex="-1" aria-labelledby="userSafetyCheckModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userSafetyCheckModalLabel"><i class="fas fa-question-circle me-2"></i>Verificação de Segurança</h5>
+                </div>
+                <div class="modal-body">
+                    <p class="lead text-center">Você está bem?</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" id="userSafetyCheckNo" class="btn btn-danger btn-lg me-3"><i class="fas fa-exclamation-triangle me-2"></i> Não</button>
+                    <button type="button" id="userSafetyCheckYes" class="btn btn-success btn-lg"><i class="fas fa-check-circle me-2"></i> Sim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Inserir Nome de Exibição (Perfil) -->
+    <div class="modal fade" id="nameInputModal" tabindex="-1" aria-labelledby="nameInputModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nameInputModalLabel">Como gostaria de ser chamada?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="nameInputField" class="form-control" placeholder="Digite seu nome ou apelido" aria-label="Nome de exibição">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="saveNameButton" class="btn btn-primary">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Chat do Instrutor Virtual -->
+    <div class="modal fade" id="instructorChatModal" tabindex="-1" aria-labelledby="instructorChatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="d-flex align-items-center">
+                        <img src="image/logo_krav_maga_site.png" alt="Avatar Mestre K" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                        <div>
+                            <h5 class="modal-title mb-0 fs-6" id="instructorChatModalLabel">Mestre K (Online)</h5>
+                            <small class="text-muted-light">Instrutor Virtual de Krav Maga</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div id="instructorChatMessages" class="modal-body chat-messages d-flex flex-column p-3">
+                    <!-- Mensagens do chat do instrutor aparecerão aqui -->
+                </div>
+                <div class="modal-footer flex-column">
+                     <div id="instructorQuickReplyContainer" class="quick-reply-container">
+                             <!-- Botões de resposta rápida aparecerão aqui -->
+                     </div>
+                    <div class="chat-input-group w-100">
+                        <input type="text" id="instructorChatInput" class="form-control" placeholder="Pergunte algo ao Mestre K...">
+                        <button id="sendInstructorChatButton" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== CABEÇALHO DA APLICAÇÃO ====== -->
+    <header id="appHeader" style="display: none;">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <button id="themeToggleMobile" class="btn btn-outline-secondary d-lg-none ms-auto me-2" aria-label="Alternar tema">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu" aria-controls="mobileMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mobileMenu">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                        <li class="nav-item"><a href="#" class="nav-link navigate-to" data-page="dashboard-page">Início</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#instructorChatModal">Instrutor Virtual</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Técnicas <i class="fas fa-chevron-down fa-xs ms-1"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" class="dropdown-item navigate-to" data-page="techniques-white-page">Faixa Branca</a></li>
+                                <li><a href="#" class="dropdown-item navigate-to" data-page="techniques-yellow-page">Faixa Amarela</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item"><a href="#" class="nav-link navigate-to" data-page="warnings-page">Sinais de Alerta</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link navigate-to" data-page="support-page">Suporte</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link navigate-to" data-page="scenarios-page">Cenários</a></li>
+                        
+                        <li class="nav-item"><a href="#" class="nav-link navigate-to" data-page="tips-page">Dicas</a></li>
+
+                        <li class="nav-item"><a href="#" class="nav-link navigate-to" data-page="quiz-page">Questionário</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Mais <i class="fas fa-chevron-down fa-xs ms-1"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" class="dropdown-item navigate-to" data-page="view-notes-page">Ver Anotações</a></li>
+                                <!--<li><a href="#" class="dropdown-item navigate-to" data-page="scenarios-page">Cenários</a></li> -->
+                                <li><a href="#" class="dropdown-item navigate-to" data-page="references-page">Referências</a></li>
+                                <li><a href="#" class="dropdown-item navigate-to" data-page="psychology-page">Psicologia</a></li>
+                               <!-- <li><a href="#" class="dropdown-item navigate-to" data-page="warnings-page">Sinais de Alerta</a></li>
+                                <li><a href="#" class="dropdown-item navigate-to" data-page="support-page">Suporte</a></li> -->
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a href="#" id="logoutButton" class="nav-link">Sair</a></li>
+                        <li class="nav-item d-none d-lg-block">
+                            <button id="themeToggle" class="btn btn-outline-secondary ms-2" aria-label="Alternar tema">
+                                <i class="fas fa-sun"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+      <!-- ====== CONTEÚDO PRINCIPAL (PÁGINAS) ====== -->
+    <main id="appContent" class="container mt-4 mb-5">
+        
+        <!-- Página: Autenticação -->
+        <section id="auth-page" class="page-section active align-items-center justify-content-center p-0">
+            <div class="w-100" style="max-width: 450px;">
+                <img src="image/logo_krav_maga_site.png" alt="Krav Maga Woman Logo" class="auth-page-logo img-fluid logo-pulse-animation" onerror="this.style.display='none'; this.alt='Logo não pôde ser carregado';">
+
+                <form id="loginForm" class="mb-3">
+                    <div class="mb-3">
+                        <label for="loginEmail" class="form-label">Email</label>
+                        <input type="email" id="loginEmail" name="loginEmail" required class="form-control" placeholder="seuemail@exemplo.com" autocomplete="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginPassword" class="form-label">Senha</label>
+                        <input type="password" id="loginPassword" name="loginPassword" required class="form-control" placeholder="********" autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                </form>
+                <p class="text-center">
+                    Não tem uma conta? <a href="#" id="showRegister" class="fw-medium">Cadastre-se</a>
+                </p>
+
+                <form id="registerForm" style="display: none;">
+                    <div class="mb-3">
+                        <label for="registerEmail" class="form-label">Email</label>
+                        <input type="email" id="registerEmail" name="registerEmail" required class="form-control" placeholder="seuemail@exemplo.com" autocomplete="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPassword" class="form-label">Senha</label>
+                        <input type="password" id="registerPassword" name="registerPassword" required class="form-control" placeholder="Crie uma senha forte (mín. 6 caracteres)" autocomplete="new-password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerConfirmPassword" class="form-label">Confirmar Senha</label>
+                        <input type="password" id="registerConfirmPassword" name="registerConfirmPassword" required class="form-control" placeholder="Confirme sua senha" autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
+                </form>
+                <p id="switchToLogin" class="text-center" style="display: none;">
+                    Já tem uma conta? <a href="#" id="showLogin" class="fw-medium">Faça login</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Página: Dashboard -->
+        <section id="dashboard-page" class="page-section">
+            <div class="text-center mb-4">
+                <img src="image/logo_krav_maga_site.png" alt="Krav Maga Woman Logo" class="dashboard-logo img-fluid logo-pulse-animation" onerror="this.style.display='none'; this.alt='Logo não pôde ser carregado';">
+            </div>
+            <h1 id="dashboardWelcomeMessage" class="mb-3 h2" style="color: var(--bs-primary);">
+                Bem-vinda ao Krav Maga Woman<span id="displayNameSpan"></span>!
+                <small class="ms-1 fs-6 fw-normal" id="displayNamePromptContainer" style="display: none;">
+                    <a href="#" id="displayNamePromptLink" class="text-decoration-none" style="color: var(--bs-secondary); font-size: 0.8em;">(Como gostaria de ser chamada?)</a>
+                </small>
+            </h1>
+            <p class="lead mb-4">Explore os recursos abaixo para fortalecer sua segurança e conhecimento.</p>
+            
+            <div class="emergency-zone">
+                <h2 class="h5 fw-semibold mb-2"><i class="fas fa-shield-alt me-2"></i>Acompanhe seu Trajeto</h2>
+                <p class="mb-2 small">Sentindo-se insegura? Inicie o monitoramento e compartilhe seu percurso em tempo real com um contato de confiança.</p>
+                <div class="d-grid gap-2">
+                    <button id="emergencyButton" class="btn btn-danger btn-lg emergency-button-pulse-animation">
+                        <i class="fas fa-map-marker-alt me-2"></i> INICIAR ACOMPANHAMENTO
+                    </button>
+                    <button id="checkContactButton" class="btn btn-secondary" style="display: none;">
+                        <i class="fas fa-user-check me-2"></i> VERIFICAR CONTATO
+                    </button>
+                </div>
+                <p id="emergencyStatus" class="emergency-status d-none"></p>
+                <p class="text-muted-custom small mt-2">Para sua segurança, certifique-se que os serviços de localização estão ativos.</p>
+                 <div class="text-muted-custom small mt-3" style="opacity: 0.9;">
+                    <p><strong>Como Funciona:</strong></p>
+                    <ul class="list-disc small">
+                        <li>Ao iniciar, um link para um mapa privado será gerado para você compartilhar.</li>
+                        <li>Seu contato verá seu deslocamento em tempo real.</li>
+                        <li>Durante o trajeto, use o botão <strong>"Verificar Contato"</strong> para enviar uma pergunta ao seu contato, confirmando que ele está atento e que você está bem.</li>
+                        <li>Pressione <strong>"Encerrar"</strong> para finalizar o acompanhamento.</li>
+                    </ul>
+                </div>
+                <div class="mt-4">
+                    <h3 class="h6 fw-semibold mb-2">Contatos de Confiança (para seu controle):</h3>
+                    <div id="emergencyContactsForm">
+                        <div id="contactsList" class="space-y-2 mb-2"></div>
+                        <div class="row g-2">
+                            <div class="col-sm">
+                                <input type="text" id="contactName" placeholder="Nome do Contato" class="form-control form-control-sm" aria-label="Nome do Contato de Confiança">
+                            </div>
+                            <div class="col-sm">
+                                <input type="text" id="contactDetail" placeholder="(11) 98765-4321 ou maria@email.com" class="form-control form-control-sm" aria-label="Contato (Telefone ou E-mail)" inputmode="tel" aria-describedby="contactHelp">
+                                <div class="invalid-feedback small">Formato inválido. Use um e-mail ou telefone com DDD.</div>
+                                <div id="contactHelp" class="form-text small">Use um e-mail válido ou um telefone com 10/11 dígitos.</div>
+                            </div>
+                            <div class="col-sm-auto">
+                                <button id="addContactButton" class="btn btn-secondary btn-sm w-100"><i class="fas fa-plus me-2" aria-hidden="true"></i>Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-4">
+                <div class="col">
+                    <div class="card h-100" role="button" tabindex="0" data-bs-toggle="modal" data-bs-target="#instructorChatModal">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-user-graduate me-2" aria-hidden="true"></i>Instrutor Virtual</h2>
+                            <p class="card-text small text-muted-light">Tire suas dúvidas sobre técnicas e treinos com nosso instrutor IA.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 navigate-to" data-page="tips-page" role="button" tabindex="0">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-lightbulb me-2" aria-hidden="true"></i>Dicas de Defesa Pessoal</h2>
+                            <p class="card-text small text-muted-light">Orientações práticas para diversas situações de risco.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 navigate-to" data-page="techniques-white-page" role="button" tabindex="0">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-user-ninja me-2" aria-hidden="true"></i>Técnicas: Faixa Branca</h2>
+                            <p class="card-text small text-muted-light">Vídeos e instruções das técnicas iniciais.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 navigate-to" data-page="techniques-yellow-page" role="button" tabindex="0">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-user-ninja me-2" aria-hidden="true"></i>Técnicas: Faixa Amarela</h2>
+                            <p class="card-text small text-muted-light">Técnicas intermediárias, contra-ataques e liberações.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 navigate-to" data-page="quiz-page" role="button" tabindex="0">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-question-circle me-2" aria-hidden="true"></i>Quiz Interativo</h2>
+                            <p class="card-text small text-muted-light">Teste seus conhecimentos sobre as técnicas.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 navigate-to" data-page="view-notes-page" role="button" tabindex="0">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-sticky-note me-2" aria-hidden="true"></i>Ver Anotações</h2>
+                            <p class="card-text small text-muted-light">Acesse e edite suas anotações de treino.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 navigate-to" data-page="scenarios-page" role="button" tabindex="0">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-tasks me-2" aria-hidden="true"></i>Análise de Cenários</h2>
+                            <p class="card-text small text-muted-light">Simulações de situações reais e como aplicar as técnicas.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 navigate-to" data-page="references-page" role="button" tabindex="0">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-book-open me-2" aria-hidden="true"></i>Arquivos de Referência</h2>
+                            <p class="card-text small text-muted-light">Materiais complementares sobre Krav Maga e violência de gênero.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 navigate-to" data-page="psychology-page" role="button" tabindex="0">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-brain me-2" aria-hidden="true"></i>Psicologia da Defesa</h2>
+                            <p class="card-text small text-muted-light">Controle do medo, tomada de decisões e autocontrole.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 navigate-to" data-page="warnings-page" role="button" tabindex="0">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-flag me-2" aria-hidden="true"></i>Sinais de Alerta</h2>
+                            <p class="card-text small text-muted-light">Reconheça comportamentos abusivos e relacionamentos tóxicos.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 navigate-to" data-page="support-page" role="button" tabindex="0">
+                        <div class="card-body">
+                            <h2 class="card-title h5"><i class="fas fa-hands-helping me-2" aria-hidden="true"></i>Assistência e Suporte</h2>
+                            <p class="card-text small text-muted-light">Canais de denúncia e acolhimento no Brasil.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="communityChatContainer" class="community-chat-card mt-5 mb-4">
+                <div class="card-body p-3">
+                    <h2 class="h5 mb-3" style="color: var(--bs-primary);"><i class="fas fa-comments me-2"></i>Espaço KMW</h2>
+                    <div id="communityChatMessagesArea" class="mb-3">
+                        <p class="text-muted-light small p-2 text-center">Carregando mensagens...</p>
+                    </div>
+                    <div class="chat-input-group">
+                        <input type="text" id="communityChatInput" class="form-control" placeholder="Digite sua mensagem..." aria-label="Mensagem do chat da comunidade">
+                        <button id="sendCommunityChatMessageButton" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-1"></i> Enviar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!-- ======================= INÍCIO DAS DICAS ======================= -->
+
+<section id="tips-page" class="page-section container py-4">
+    <div class="text-center mb-5">
+        <!-- <div class="badge bg-primary bg-opacity-10 text-primary mb-2 px-3 py-2 rounded-pill fw-semibold">Segurança Ativa e Prevenção</div> -->
+        <h1 class="display-5 fw-bold" style="color: var(--bs-primary);">Dicas de Segurança</h1>
+        <p class="lead mx-auto" style="color: var(--bs-body-color); max-width: 800px;">
+            A tecnologia é uma aliada, mas a prevenção é sua primeira linha de defesa. Adote estas práticas de segurança no dia a dia para minimizar riscos e aumentar sua proteção pessoal.
+        </p>
+    </div>
+
+    <!-- Layout em Grade (Grid) -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+
+        <!-- Card 1: Consciência Situacional -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary me-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="fa-solid fa-street-view fa-lg"></i>
+                        </div>
+                        <h2 class="card-title h5 fw-bold mb-0">Consciência Situacional</h2>
+                    </div>
+                    <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                        <li class="d-flex">
+                            <i class="fa-solid fa-person-rays text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Postura de Alerta:</strong> Mantenha a cabeça erguida. Uma postura confiante desestimula agressores que buscam vítimas distraídas.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-ear-listen text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Sentidos Ativos:</strong> Evite fones de ouvido em locais públicos. Sua audição é um radar essencial para detectar aproximações.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-eye text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Varredura Visual:</strong> Monitore o ambiente (360º). Use reflexos de vitrines para checar a retaguarda discretamente.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-brain text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Intuição:</strong> Se sentir desconforto, não hesite. Mude de rota ou entre em um local seguro imediatamente.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Segurança Residencial -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary me-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="fa-solid fa-shield-heart fa-lg"></i>
+                        </div>
+                        <h2 class="card-title h5 fw-bold mb-0">Segurança Residencial</h2>
+                    </div>
+                    <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                        <li class="d-flex">
+                            <i class="fa-solid fa-door-closed text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Controle de Acesso:</strong> Use sempre o olho mágico. Nunca abra a porta sem confirmar visualmente a identidade do visitante.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-box-open text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Entregas Seguras:</strong> Receba encomendas através de portinholas ou grades. Evite o contato físico direto na porta.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-lightbulb text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Iluminação Tática:</strong> Elimine pontos cegos. Luzes com sensor de presença na entrada são excelentes para dissuasão.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-image-slash text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Discrição:</strong> Evite expor a rotina da casa ou fotos da fachada em redes sociais abertas.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Proteção em Movimento (Integração com Funcionalidade de Rastreamento) -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-lift transition-all border-bottom border-4 border-primary">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary me-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="fa-solid fa-route fa-lg"></i>
+                        </div>
+                        <h2 class="card-title h5 fw-bold mb-0">No Transporte</h2>
+                    </div>
+                    <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                        <li class="d-flex">
+                            <i class="fa-solid fa-taxi text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Apps de Transporte:</strong> Confira placa e motorista. Use a função <strong>"Rastreamento"</strong> deste sistema para compartilhar sua rota.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-car-side text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Carro Próprio:</strong> Mantenha portas travadas. No trânsito, deixe espaço à frente para manobras evasivas.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-bus-simple text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Transporte Público:</strong> Prefira vagões movimentados. Mantenha seus pertences à frente do corpo e protegidos.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-key text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Chegada Rápida:</strong> Tenha as chaves na mão antes de chegar ao portão ou carro para minimizar a exposição.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Segurança Digital -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary me-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="fa-solid fa-user-secret fa-lg"></i>
+                        </div>
+                        <h2 class="card-title h5 fw-bold mb-0">Segurança Digital</h2>
+                    </div>
+                    <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                        <li class="d-flex">
+                            <i class="fa-solid fa-location-dot-slash text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Geolocalização:</strong> Desative o check-in automático e a marcação de local em tempo real nas redes sociais.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-comments text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Encontros:</strong> Marque sempre em locais públicos. Avise um contato de confiança sobre onde vai e com quem.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-key text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Senhas Fortes:</strong> Use senhas complexas e ative a verificação em duas etapas (2FA) em todas as contas.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-wifi-slash text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Redes Públicas:</strong> Evite acessar bancos ou dados sensíveis em redes Wi-Fi abertas e não seguras.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Card 5: Tecnologias de Apoio (Integração com Seção 4.2 do TCC) -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-lift transition-all border-bottom border-4 border-danger">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 text-danger me-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="fa-solid fa-mobile-screen-button fa-lg"></i>
+                        </div>
+                        <h2 class="card-title h5 fw-bold mb-0">Tecnologias de Apoio</h2>
+                    </div>
+                    <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                        <li class="d-flex">
+                            <i class="fa-solid fa-map-location-dot text-danger mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Rastreamento Ativo:</strong> Utilize a função de monitoramento deste sistema em trajetos noturnos ou desconhecidos.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-triangle-exclamation text-danger mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Pânico Silencioso:</strong> Conheça o recurso de <strong>alerta discreto</strong> do sistema para situações de coação onde não é possível falar.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-user-group text-danger mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Contatos de Confiança:</strong> Mantenha sua lista de contatos de emergência atualizada no aplicativo.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-briefcase-medical text-danger mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Kit Básico:</strong> Mantenha o celular carregado (use power bank) e documentos essenciais sempre acessíveis.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Card 6: Prevenção Contra Assédio -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary me-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="fa-solid fa-handshake-angle fa-lg"></i>
+                        </div>
+                        <h2 class="card-title h5 fw-bold mb-0">Combate ao Assédio</h2>
+                    </div>
+                    <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                        <li class="d-flex">
+                            <i class="fa-solid fa-hand text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Imponha Limites:</strong> Seja firme. Um "NÃO" claro, alto e com postura séria muitas vezes cessa a ação indesejada.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-users text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Busque Público:</strong> Ao se sentir ameaçada, aproxime-se imediatamente de grupos ou seguranças. O agressor teme testemunhas.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-camera-retro text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Documente:</strong> Se for seguro, registre o ocorrido (foto, áudio). Provas são essenciais para denúncias.</span>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fa-solid fa-building-shield text-primary mt-1 me-3 flex-shrink-0"></i>
+                            <span><strong class="text-body-emphasis">Recursos Oficiais:</strong> Saiba onde fica a Delegacia da Mulher mais próxima ou ligue 180 para denúncias anônimas.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- Fim do .row -->
+</section>
+<!-- ======================= FIM DAS DICAS ======================= -->
+<!-- Página: Ver Anotações -->
+<section id="view-notes-page" class="page-section container py-4">
+    
+    <!-- Cabeçalho da Página -->
+    <div class="text-center mb-5">
+        <div class="badge bg-primary bg-opacity-10 text-primary mb-2 px-3 py-2 rounded-pill fw-semibold text-uppercase tracking-wide">Diário de Treino</div>
+        <h1 class="display-5 fw-bold text-body-emphasis">Minhas Anotações</h1>
+        <p class="lead mx-auto text-secondary" style="max-width: 700px;">
+            Registre seus aprendizados e acompanhe sua evolução. A escrita reforça a memória muscular e técnica.
+        </p>
+    </div>
+
+    <div class="row g-4">
+        
+        <!-- Coluna Faixa Branca -->
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-lift transition-all">
+                <!-- Cabeçalho do Card: Faixa Branca (Neutro/Cinza) -->
+                <div class="card-header bg-body-tertiary border-0 p-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white p-3 rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                                <i class="fas fa-user fa-lg text-secondary"></i>
+                            </div>
+                            <div>
+                                <h2 class="h4 fw-bold mb-1 text-body-emphasis">Faixa Branca</h2>
+                                <p class="mb-0 text-secondary small fw-medium text-uppercase ls-1">Fundamentos Básicos</p>
+                            </div>
+                        </div>
+                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-10 px-3 py-2 rounded-pill">Iniciante</span>
+                    </div>
+                </div>
+
+                <!-- Corpo do Card: Área de Leitura -->
+                <div class="card-body p-4 bg-white" style="min-height: 300px;">
+                    <div id="whiteBeltNotesContainer" class="vstack gap-3 h-100">
+                        <!-- Estado Vazio (Placeholder) -->
+                        <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center py-5 opacity-75">
+                            <div class="bg-light p-4 rounded-circle mb-3">
+                                <i class="fas fa-book-open fa-2x text-secondary opacity-50"></i>
+                            </div>
+                            <h5 class="fw-semibold text-secondary">Caderno Vazio</h5>
+                            <p class="text-muted small mb-3">Você ainda não registrou anotações para este nível.</p>
+                            <button class="btn btn-outline-secondary btn-sm rounded-pill px-4 navigate-to" data-page="techniques-white-page">
+                                Ir para Técnicas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna Faixa Amarela -->
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-lift transition-all">
+                <!-- Cabeçalho do Card: Faixa Amarela (Destaque Amarelo Suave) -->
+                <div class="card-header border-0 p-4" style="background-color: #fff9c4;"> <!-- Amarelo bem claro -->
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white p-3 rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                                <i class="fas fa-certificate fa-lg text-warning"></i>
+                            </div>
+                            <div>
+                                <h2 class="h4 fw-bold mb-1 text-dark">Faixa Amarela</h2>
+                                <p class="mb-0 text-dark small fw-medium text-uppercase ls-1 opacity-75">Técnicas Intermediárias</p>
+                            </div>
+                        </div>
+                        <span class="badge bg-warning text-dark border border-warning border-opacity-25 px-3 py-2 rounded-pill">Nível 2</span>
+                    </div>
+                </div>
+
+                <!-- Corpo do Card: Área de Leitura -->
+                <div class="card-body p-4 bg-white" style="min-height: 300px;">
+                    <div id="yellowBeltNotesContainer" class="vstack gap-3 h-100">
+                        <!-- Estado Vazio (Placeholder) -->
+                        <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center py-5 opacity-75">
+                            <div class="bg-warning bg-opacity-10 p-4 rounded-circle mb-3">
+                                <i class="fas fa-pencil-alt fa-2x text-warning"></i>
+                            </div>
+                            <h5 class="fw-semibold text-body-secondary">Comece a Escrever</h5>
+                            <p class="text-muted small mb-3">Suas observações sobre as técnicas da Faixa Amarela aparecerão aqui.</p>
+                             <button class="btn btn-outline-warning text-dark btn-sm rounded-pill px-4 navigate-to" data-page="techniques-yellow-page">
+                                Estudar Agora
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <!-- Dica de Rodapé -->
+    <div class="mt-5 text-center">
+        <div class="d-inline-flex align-items-center bg-primary bg-opacity-10 px-4 py-2 rounded-pill">
+            <i class="fas fa-lightbulb text-primary me-2"></i>
+            <span class="text-primary fw-medium small">Dica: Mantenha suas anotações curtas e focadas nos detalhes que você costuma esquecer.</span>
+        </div>
+    </div>
+
+</section>
+
+        <!-- Página: Questionário (Versão Aprimorada) -->
+<section id="quiz-page" class="page-section container">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold" style="color: var(--bs-primary);">Avalie Seu Conhecimento em Segurança</h1>
+        <p class="lead" style="color: var(--custom-text-muted-light);">Teste seus instintos e conhecimentos. Descubra seus pontos fortes e onde você pode melhorar.</p>
+    </div>
+
+    <!-- Container Principal do Quiz -->
+    <div id="quiz-container-wrapper" class="card shadow-sm">
+        <div class="card-body p-lg-5">
+            <!-- Cabeçalho do Quiz (Progresso e Contador) -->
+            <div id="quiz-header" class="mb-4" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 id="quiz-question-counter" class="h6 mb-0 text-muted-light">Pergunta 1 de 20</h2>
+                    <span id="quiz-timer" class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill"></span>
+                </div>
+                <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 8px;">
+                    <div id="quiz-progress-bar" class="progress-bar" style="width: 0%; background-color: var(--bs-primary);"></div>
+                </div>
+            </div>
+
+            <!-- Área onde as perguntas são carregadas -->
+            <div id="quiz-content">
+                <!-- Estado Inicial -->
+                <div id="quiz-start-screen" class="text-center">
+                    <i class="fa-solid fa-shield-halved fa-3x mb-3" style="color: var(--bs-primary);"></i>
+                    <h3 class="h4">Você está pronta para começar?</h3>
+                    <p class="text-muted-light mb-4">O questionário contém 20 perguntas de múltipla escolha. <br>Responda com base no que você faria em cada situação.</p>
+                    <button id="start-quiz-button" class="btn btn-primary btn-lg px-5">Iniciar Teste</button>
+                </div>
+            </div>
+
+            <!-- Área onde o formulário do quiz será injetado -->
+            <form id="quiz-form" style="display:none;"></form>
+
+        </div>
+    </div>
+
+    <!-- Card de Resultado (Aprimorado) -->
+    <div id="quiz-result" class="card shadow-sm mt-4" style="display:none;">
+        <div class="card-body text-center p-lg-5">
+            <div id="quiz-result-icon" class="mb-3">
+                <!-- Ícone do resultado será inserido aqui -->
+            </div>
+            <h2 id="quiz-result-title" class="card-title h3 mb-2"></h2>
+            <p id="quiz-score" class="lead fw-bold mb-3"></p>
+            <p id="quiz-feedback-message" class="mx-auto" style="max-width: 600px;"></p>
+            <button id="retake-quiz-button" class="btn btn-primary mt-3 px-4">
+                <i class="fa-solid fa-rotate-right me-2"></i>Tentar Novamente
+            </button>
+        </div>
+    </div>
+</section>
+
+ <!-- Página: Cenários -->
+<section id="scenarios-page" class="page-section container py-4">
+    <div class="text-center mb-5">
+       <!-- <div class="badge bg-warning bg-opacity-10 text-warning-emphasis mb-2 px-3 py-2 rounded-pill fw-semibold">Tática e Prevenção</div> -->
+        <h1 class="display-5 fw-bold" style="color: var(--bs-primary);">Análise de Cenários de Risco</h1>
+        <p class="lead mx-auto" style="color: var(--bs-body-color); max-width: 800px;">
+            O Krav Maga não é apenas sobre golpes, é sobre sobrevivência. Aprenda a identificar, prevenir e reagir a ameaças comuns. Lembre-se: a melhor luta é aquela que se evita.
+        </p>
+    </div>
+
+    <div class="vstack gap-5">
+        
+        <!-- Cenário 1: Assalto -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                        <i class="fas fa-person-harassing fa-xl text-danger"></i>
+                    </div>
+                    <div>
+                        <h2 class="card-title h4 fw-bold mb-1">Cenário 1: Tentativa de Assalto na Rua</h2>
+                        <p class="text-secondary mb-0 small">Situação de risco urbano comum com intimidação.</p>
+                    </div>
+                </div>
+
+                <p class="technique-description-text mb-4">
+                    Você está caminhando em uma rua pouco movimentada. Um indivíduo se aproxima rapidamente, bloqueia sua passagem e anuncia um assalto, exigindo seus pertences. Ele age de forma agressiva, mas não exibe uma arma imediatamente.
+                </p>
+
+                <h3 class="h6 fw-bold text-uppercase text-primary mb-3"><i class="fas fa-chess-board me-2"></i>Plano de Ação Tático</h3>
+                
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-hand-paper me-2 text-primary"></i>1. Postura de "Não Agressão"</strong>
+                            <span class="text-secondary small">Levante as mãos abertas na altura do peito (posição "fence"). Isso sinaliza calma para o agressor, mas deixa suas mãos prontas para defender ou atacar se necessário.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-comments me-2 text-primary"></i>2. Comunicação e Entrega</strong>
+                            <span class="text-secondary small">Fale com calma. Diga "Vou pegar o celular". Entregue o que ele quer. Se possível, jogue o objeto para o lado (longe de você) para desviar a atenção dele.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-eye me-2 text-primary"></i>3. Escaneamento</strong>
+                            <span class="text-secondary small">Sem encarar fixamente, observe as mãos dele (tem arma?), procure rotas de fuga e verifique se há comparsas ao redor.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-running me-2 text-primary"></i>4. Janela de Fuga</strong>
+                            <span class="text-secondary small">Assim que ele focar no objeto entregue, afaste-se rapidamente para trás. Corra para um local seguro e movimentado.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger border-danger d-flex align-items-start" role="alert">
+                    <i class="fas fa-exclamation-triangle fa-lg mt-1 me-3"></i>
+                    <div>
+                        <strong class="alert-heading h6 fw-bold">Ponto Crítico: E se a situação escalar?</strong>
+                        <p class="mb-0 small mt-1">
+                            Se o agressor tentar te agarrar ou te levar para outro local, a situação muda de roubo para risco de vida. <strong>A reação deve ser explosiva.</strong> Ataque pontos vulneráveis (olhos, garganta, genitais) com máxima força para criar uma oportunidade de fuga imediata.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cenário 2: Assédio -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                        <i class="fas fa-bus fa-xl text-primary"></i>
+                    </div>
+                    <div>
+                        <h2 class="card-title h4 fw-bold mb-1">Cenário 2: Assédio em Transporte Público</h2>
+                        <p class="text-secondary mb-0 small">Invasão de espaço pessoal e importunação.</p>
+                    </div>
+                </div>
+
+                <p class="technique-description-text mb-4">
+                    Você está em um ônibus ou metrô lotado. Um passageiro começa a invadir seu espaço pessoal deliberadamente, encostando em você de forma inadequada ou fazendo comentários ofensivos.
+                </p>
+
+                <h3 class="h6 fw-bold text-uppercase text-primary mb-3"><i class="fas fa-chess-board me-2"></i>Plano de Ação Tático</h3>
+                
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-shield-alt me-2 text-primary"></i>1. Bloqueio Físico e Verbal</strong>
+                            <span class="text-secondary small">Coloque sua mochila ou bolsa na frente do corpo como escudo. Fale alto e firme: <strong>"AFASTE-SE!"</strong> ou "NÃO ME TOQUE!". A vergonha é dele, não sua.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-bullhorn me-2 text-primary"></i>2. Quebre o Silêncio</strong>
+                            <span class="text-secondary small">Chame a atenção dos outros passageiros. O assediador conta com o seu silêncio. "ESSE HOMEM ESTÁ ME ASSEDIANDO!".</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-arrows-alt me-2 text-primary"></i>3. Mude de Posição</strong>
+                            <span class="text-secondary small">Não fique paralisada. Mova-se imediatamente para perto do motorista, de um segurança ou de um grupo de mulheres.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-fist-raised me-2 text-primary"></i>4. Prontidão</strong>
+                            <span class="text-secondary small">Se ele insistir ou tentar te segurar, use o ambiente (barras de apoio) para se estabilizar e use cotovelos ou pisões para se soltar.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cenário 3: Perseguição (Novo) -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                        <i class="fas fa-shoe-prints fa-xl text-warning-emphasis"></i>
+                    </div>
+                    <div>
+                        <h2 class="card-title h4 fw-bold mb-1">Cenário 3: Perseguição na Rua</h2>
+                        <p class="text-secondary mb-0 small">Suspeita de estar sendo seguida.</p>
+                    </div>
+                </div>
+
+                <p class="technique-description-text mb-4">
+                    Você está voltando para casa à noite e percebe que alguém está caminhando atrás de você no mesmo ritmo há algum tempo. A intuição diz que algo está errado.
+                </p>
+
+                <h3 class="h6 fw-bold text-uppercase text-primary mb-3"><i class="fas fa-chess-board me-2"></i>Plano de Ação Tático</h3>
+                
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-random me-2 text-primary"></i>1. Confirme a Suspeita</strong>
+                            <span class="text-secondary small">Mude de calçada ou atravesse a rua. Se a pessoa também atravessar, é um sinal claro. Pare e finja amarrar o sapato ou olhar uma vitrine para ver se ela passa.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-store me-2 text-primary"></i>2. Busque Áreas Seguras</strong>
+                            <span class="text-secondary small">Não vá para casa (para não revelar onde mora). Entre em qualquer comércio aberto, posto de gasolina ou prédio com portaria.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-phone me-2 text-primary"></i>3. Comunicação Ativa</strong>
+                            <span class="text-secondary small">Ligue para alguém e fale alto sobre sua localização: "Estou na rua X, chegando aí". Use o <strong>Botão de Emergência</strong> do app para enviar sua localização real.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100 border border-light-subtle">
+                            <strong class="d-block text-dark mb-1"><i class="fas fa-person-walking-arrow-right me-2 text-primary"></i>4. Enfrentamento Verbal (Se necessário)</strong>
+                            <span class="text-secondary small">Se não houver refúgio e a pessoa se aproximar, vire-se, mantenha distância e pergunte alto: "O QUE VOCÊ QUER?". Isso quebra o elemento surpresa.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+                <!-- Página: Referências e Leitura Complementar -->
+        <section id="references-page" class="page-section container py-4">
+            <!-- Cabeçalho -->
+            <div class="text-center mb-5">
+            <!-- <div class="badge bg-info bg-opacity-10 text-info-emphasis mb-2 px-3 py-2 rounded-pill fw-semibold">Conhecimento e Base Teórica</div> -->
+                <h1 class="display-5 fw-bold" style="color: var(--bs-primary);">Arquivos de Referência</h1>
+                <p class="lead mx-auto" style="color: var(--bs-body-color); max-width: 800px;">
+                    Aprofunde seus conhecimentos com materiais selecionados sobre defesa pessoal, dados estatísticos, psicologia e a filosofia do Krav Maga.
+                </p>
+            </div>
+
+            <div class="vstack gap-4">
+
+                <!-- 1. Estudo Psicológico -->
+                <div class="card border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                <i class="fas fa-brain fa-xl text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h2 class="card-title h5 fw-bold mb-2">Estudo: Impacto Psicológico da Violência de Gênero</h2>
+                                <p class="card-text text-secondary mb-3">
+                                    Análise profunda sobre as consequências psicológicas (TEPT, ansiedade) da violência na vida das mulheres e a importância de redes de apoio.
+                                </p>
+                                <a href="https://www.ipea.gov.br/portal/images/stories/PDFs/SIPS/sips_violencia_contra_mulheres.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                    <i class="fas fa-file-pdf me-2"></i>Ver Estudo Completo (IPEA)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. História do Krav Maga -->
+                <div class="card border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+                            <div class="bg-warning bg-opacity-10 p-3 rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                <i class="fas fa-fist-raised fa-xl text-warning-emphasis"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h2 class="card-title h5 fw-bold mb-2">Artigo: A História e Filosofia do Krav Maga</h2>
+                                <p class="card-text text-secondary mb-3">
+                                    Conheça a origem do método com Imi Lichtenfeld e sua evolução de sistema militar para defesa civil, focado em simplicidade e sobrevivência.
+                                </p>
+                                <a href="https://kravmaga.com.br/historia/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-warning text-warning-emphasis btn-sm rounded-pill px-3">
+                                    <i class="fas fa-book-open me-2"></i>Ler na Federação Sul Americana
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Dados Estatísticos -->
+                <div class="card border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+                            <div class="bg-danger bg-opacity-10 p-3 rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                <i class="fas fa-chart-pie fa-xl text-danger"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h2 class="card-title h5 fw-bold mb-2">Relatório: Violência Doméstica no Brasil (2024)</h2>
+                                <p class="card-text text-secondary mb-3">
+                                    Pesquisa DataSenado fundamental que revela que 30% das brasileiras já sofreram violência doméstica. Dados cruciais para entender o cenário atual.
+                                </p>
+                                <a href="https://www12.senado.leg.br/institucional/datasenado/materias/pesquisas-tematicas/violencia-domestica-e-familiar-contra-a-mulher" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                    <i class="fas fa-external-link-alt me-2"></i>Acessar Pesquisa DataSenado
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Defesa Pessoal e Empoderamento -->
+                <div class="card border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+                            <div class="bg-success bg-opacity-10 p-3 rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                <i class="fas fa-female fa-xl text-success"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h2 class="card-title h5 fw-bold mb-2">Artigo Acadêmico: Defesa Pessoal como Empoderamento</h2>
+                                <p class="card-text text-secondary mb-3">
+                                    Baseado em F. A. D. Mendes (2020), este material explora como o treinamento físico atua como ferramenta de recuperação da autoestima e autonomia feminina.
+                                </p>
+                                <a href="https://repositorio.ufpb.br/jspui/handle/123456789/1" target="_blank" rel="noopener noreferrer" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                                    <i class="fas fa-graduation-cap me-2"></i>Buscar no Repositório
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Tecnologia na Educação Física -->
+                <div class="card border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+                            <div class="bg-info bg-opacity-10 p-3 rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                <i class="fas fa-laptop-code fa-xl text-info-emphasis"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h2 class="card-title h5 fw-bold mb-2">Tecnologia: Imersão no Treinamento de Artes Marciais</h2>
+                                <p class="card-text text-secondary mb-3">
+                                    Referência técnica (Lygouras; Tsinakos, 2024) sobre como tecnologias web e assistentes virtuais podem complementar o ensino tradicional, validando a metodologia deste sistema.
+                                </p>
+                                <a href="https://www.mdpi.com/journal/applsci" target="_blank" rel="noopener noreferrer" class="btn btn-outline-info text-info-emphasis btn-sm rounded-pill px-3">
+                                    <i class="fas fa-link me-2"></i>Ver Publicação Científica
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Saúde Pública (OMS) -->
+                <div class="card border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+                            <div class="bg-secondary bg-opacity-10 p-3 rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                <i class="fas fa-globe-americas fa-xl text-secondary"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h2 class="card-title h5 fw-bold mb-2">Relatório Global: Violência contra a Mulher (OMS)</h2>
+                                <p class="card-text text-secondary mb-3">
+                                    Dados da OMS classificando a violência de gênero como um problema de saúde pública global, afetando 1 em cada 3 mulheres.
+                                </p>
+                                <a href="https://www.who.int/news-room/fact-sheets/detail/violence-against-women" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                                    <i class="fas fa-notes-medical me-2"></i>Acessar Dados da OMS
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Vídeos Técnicos -->
+                <div class="card border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+                            <div class="bg-danger bg-opacity-10 p-3 rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                <i class="fab fa-youtube fa-xl text-danger"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h2 class="card-title h5 fw-bold mb-2">Vídeos: Canal Oficial da Federação Sul Americana</h2>
+                                <p class="card-text text-secondary mb-3">
+                                    Acervo visual com demonstrações técnicas e entrevistas com o Mestre Kobi Lichtenstein, introdutor da modalidade na América Latina.
+                                </p>
+                                <a href="https://www.youtube.com/@KravMagaDasAmericas" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                    <i class="fas fa-play-circle me-2"></i>Acessar Canal no YouTube
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Princípios Técnicos -->
+                <div class="card border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+                            <div class="bg-dark bg-opacity-10 p-3 rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                <i class="fas fa-shield-alt fa-xl text-dark"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h2 class="card-title h5 fw-bold mb-2">Leitura Técnica: Princípios Fundamentais</h2>
+                                <p class="card-text text-secondary mb-3">
+                                    Entenda a lógica de combate do Krav Maga: defesa e ataque simultâneos, pontos sensíveis e uso de objetos comuns.
+                                </p>
+                                <a href="https://kravmaga.com.br/o-krav-maga/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+                                    <i class="fas fa-book me-2"></i>Ler sobre os Princípios
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. Krav Maga para Mulheres -->
+                <div class="card border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                <i class="fas fa-venus fa-xl text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h2 class="card-title h5 fw-bold mb-2">Matéria: Por que o Krav Maga é ideal para Mulheres?</h2>
+                                <p class="card-text text-secondary mb-3">
+                                    Discussão sobre como a técnica nivela a desvantagem de força física, permitindo defesa eficaz contra agressores maiores.
+                                </p>
+                                <a href="https://kravmaga.com.br/krav-maga-para-mulheres/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                    <i class="fas fa-newspaper me-2"></i>Ler Matéria Completa
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <!-- ======================= SEÇÃO: PSICOLOGIA DA DEFESA PESSOAL ======================= -->
+        <section id="psychology-page" class="page-section container py-4">
+            <div class="text-center mb-5">
+               <!-- <div class="badge bg-primary bg-opacity-10 text-primary mb-2 px-3 py-2 rounded-pill fw-semibold">Mente e Comportamento</div> -->
+                <h1 class="display-5 fw-bold" style="color: var(--bs-primary);">Psicologia da Defesa Pessoal</h1>
+                <p class="lead mx-auto" style="color: var(--custom-text-muted-light); max-width: 800px;">
+                    A defesa pessoal não começa com um golpe, mas com uma mentalidade. O Krav Maga atua no fortalecimento psicológico para transformar o medo em reação e a vulnerabilidade em autonomia.
+                </p>
+            </div>
+
+            <div class="vstack gap-4">
+
+                <!-- 1. Controle do Medo (Expandido) -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary me-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                                <i class="fa-solid fa-brain fa-lg"></i>
+                            </div>
+                            <h2 class="card-title h4 fw-bold mb-0">Controle do Medo e Ansiedade</h2>
+                        </div>
+                        <p class="technique-description-text">
+                            O medo é uma resposta biológica inevitável e essencial à percepção de perigo. No entanto, o pânico paralisa. O objetivo do treinamento no Krav Maga não é eliminar o medo, mas canalizá-lo para um "estado de alerta funcional".
+                        </p>
+                        <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                            <li class="d-flex align-items-start">
+                                <i class="fa-solid fa-check text-success mt-1 me-2 flex-shrink-0"></i>
+                                <span class="text-muted-custom"><strong>Fisiologia do Estresse:</strong> Sob ameaça, o corpo libera adrenalina, causando visão de túnel e perda de habilidades motoras finas. Entender isso evita o choque na hora da ação.</span>
+                            </li>
+                            <li class="d-flex align-items-start">
+                                <i class="fa-solid fa-check text-success mt-1 me-2 flex-shrink-0"></i>
+                                <span class="text-muted-custom"><strong>Respiração Tática:</strong> Técnicas de respiração profunda e ritmada são usadas para baixar a frequência cardíaca, oxigenar o cérebro e recuperar a clareza mental em segundos.</span>
+                            </li>
+                            <li class="d-flex align-items-start">
+                                <i class="fa-solid fa-check text-success mt-1 me-2 flex-shrink-0"></i>
+                                <span class="text-muted-custom"><strong>Inoculação do Estresse:</strong> Treinar sob condições de cansaço ou surpresa "vacina" a mente, tornando a resposta defensiva algo familiar e não traumático.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 2. Tomada de Decisão (Mantido e Melhorado) -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary me-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                                <i class="fa-solid fa-stopwatch fa-lg"></i>
+                            </div>
+                            <h2 class="card-title h4 fw-bold mb-0">Tomada de Decisões Sob Pressão</h2>
+                        </div>
+                        <p class="technique-description-text">
+                            Em uma situação de confronto, não há tempo para deliberação complexa. A capacidade de tomar decisões rápidas (Heurística) é o que separa a vítima da sobrevivente.
+                        </p>
+                        <div class="p-3 rounded bg-light border">
+                            <p class="mb-2 text-dark"><strong>O Ciclo OODA (Observar, Orientar, Decidir, Agir):</strong></p>
+                            <p class="small text-dark mb-0">O treinamento condiciona o cérebro a encurtar esse ciclo. Ao reconhecer um padrão de agressão (gatilho), a resposta física é automatizada ("memória muscular"), permitindo que você reaja eficazmente antes mesmo de processar conscientemente toda a cena.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Empoderamento e Autoestima (NOVO - Baseado no TCC) -->
+                <div class="card border-0 shadow-sm border-start border-4 border-primary">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary me-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                                <i class="fa-solid fa-person-rays fa-lg"></i>
+                            </div>
+                            <h2 class="card-title h4 fw-bold mb-0">Empoderamento e Resgate da Autonomia</h2>
+                        </div>
+                        <p class="technique-description-text">
+                            A violência de gênero muitas vezes ataca a percepção de capacidade da mulher. O treinamento técnico atua diretamente na reconstrução dessa autoimagem.
+                        </p>
+                        <p class="technique-description-text">
+                            Ao perceber que seu corpo — independente de tamanho ou força física — é capaz de gerar potência e neutralizar ameaças maiores, ocorre uma quebra de paradigmas. Esse <strong>empoderamento físico</strong> transborda para a vida cotidiana, resultando em maior assertividade no trabalho, nos relacionamentos e na ocupação de espaços públicos.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 4. Sinais de Alerta e Ciclo da Violência (NOVO - Baseado no Slide 14) -->
+                <div class="card border-0 shadow-sm bg-opacity-10 bg-warning">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-25 text-warning-emphasis me-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                                <i class="fa-solid fa-triangle-exclamation fa-lg"></i>
+                            </div>
+                            <h2 class="card-title h4 fw-bold mb-0 text-warning-emphasis">Psicoeducação: O Ciclo da Violência</h2>
+                        </div>
+                        <p class="technique-description-text">
+                            A defesa pessoal não lida apenas com estranhos na rua. É vital reconhecer os sinais de relacionamentos abusivos antes que a violência física ocorra.
+                        </p>
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-4">
+                                <div class="p-3 h-100 bg-white rounded border shadow-sm">
+                                    <h5 class="fw-bold text-primary small text-uppercase">1. Tensão</h5>
+                                    <p class="small text-dark mb-0">Agressões verbais, ciúmes excessivos, controle de celular/roupas e isolamento social da vítima.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 h-100 bg-white rounded border shadow-sm">
+                                    <h5 class="fw-bold text-danger small text-uppercase">2. Explosão</h5>
+                                    <p class="small text-dark mb-0">Ocorre a violência física, sexual ou psicológica aguda. É o momento de maior risco à vida.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 h-100 bg-white rounded border shadow-sm">
+                                    <h5 class="fw-bold text-success small text-uppercase">3. Lua de Mel</h5>
+                                    <p class="small text-dark mb-0">O agressor pede perdão, promete mudança e se torna carinhoso, dificultando a saída da vítima.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-3 rounded" style="background-color: rgba(255, 193, 7, 0.15);">
+                            <p class="small mb-0 text-dark"><strong><i class="fas fa-info-circle me-1"></i> Nota Ética:</strong> Este sistema oferece suporte informativo. Para acompanhamento terapêutico ou denúncias, utilize os canais oficiais listados na seção de Suporte e Sinais de Alerta.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Página: Sinais de Alerta -->
+        <section id="warnings-page" class="page-section container py-4">
+            <div class="text-center mb-5">
+                <!--<div class="badge bg-danger bg-opacity-10 text-danger mb-2 px-3 py-2 rounded-pill fw-semibold">Prevenção e Conscientização</div> -->
+                <h1 class="display-5 fw-bold" style="color: var(--bs-primary);">Sinais de Alerta em Relacionamentos</h1>
+                <p class="lead mx-auto" style="color: var(--bs-body-color); max-width: 800px;">
+                    A violência não começa com a agressão física. Reconhecer os sinais sutis é o primeiro passo para se proteger. Se você identificar esses comportamentos, saiba que não é culpa sua.
+                </p>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                
+                <!-- Card Controle Excessivo -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-gamepad fa-lg text-primary"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0">Controle Excessivo</h2>
+                            </div>
+                            <p class="card-text">
+                                Ele(a) monitora suas roupas, amizades, redes sociais e horários. Exige saber onde você está e com quem a todo momento, tratando você como posse.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Isolamento -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-user-friends fa-lg text-primary"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0">Isolamento Social</h2>
+                            </div>
+                            <p class="card-text">
+                                Sutilmente ou não, afasta você de amigos e familiares. Cria intrigas ou faz você se sentir culpada por passar tempo com outros, gerando dependência emocional exclusiva.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Ciúme Patológico -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-eye fa-lg text-primary"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0">Ciúme Patológico</h2>
+                            </div>
+                            <p class="card-text">
+                                Acessos de ciúme desproporcionais e sem motivo real. Acusações constantes de infidelidade que servem para justificar o controle e a agressividade.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Críticas Constantes -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-thumbs-down fa-lg text-primary"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0">Críticas Constantes</h2>
+                            </div>
+                            <p class="card-text">
+                                Humilhação disfarçada de "piada" ou "conselho". Desvaloriza suas opiniões, aparência e conquistas sistematicamente para minar sua autoestima.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Manipulação (Gaslighting) -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-theater-masks fa-lg text-primary"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0">Gaslighting</h2>
+                            </div>
+                            <p class="card-text">
+                                Distorce a realidade para fazer você duvidar da sua própria sanidade e memória. Frases como "você está louca" ou "isso nunca aconteceu" são comuns.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Explosões de Raiva -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-bomb fa-lg text-danger"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0 text-danger">Explosões de Raiva</h2>
+                            </div>
+                            <p class="card-text">
+                                Usa a intimidação com gritos, socos na parede ou em objetos para gerar medo. Você sente que está "pisando em ovos" para evitar a próxima explosão.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Responsabilização da Vítima -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-user-shield fa-lg text-primary"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0">Inversão de Culpa</h2>
+                            </div>
+                            <p class="card-text">
+                                Nunca assume responsabilidade pelos próprios atos. Culpa você pelo comportamento agressivo dele(a): "Você me provocou", "Olha o que você me fez fazer".
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Pressão Sexual -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-heart-broken fa-lg text-danger"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0 text-danger">Coerção Sexual</h2>
+                            </div>
+                            <p class="card-text">
+                                Força relações sexuais ou atos que você não deseja, ignora seus "nãos" ou faz chantagem emocional se você recusar. O sexo não deve ser uma obrigação.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Controle Financeiro -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-money-bill-wave fa-lg text-primary"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0">Violência Patrimonial</h2>
+                            </div>
+                            <p class="card-text">
+                                Controla rigorosamente seu dinheiro, proíbe você de trabalhar/estudar ou retém seus documentos e cartões, tirando sua autonomia de sobrevivência.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Ameaças -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-exclamation-triangle fa-lg text-danger"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0 text-danger">Ameaças</h2>
+                            </div>
+                            <p class="card-text">
+                                Usa chantagem para manter o relacionamento. Ameaça machucar você, seus filhos, expor fotos íntimas ou se ferir caso você tente terminar.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Ciclo de Abuso -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-sync-alt fa-lg text-primary"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0">Ciclo da Violência</h2>
+                            </div>
+                            <p class="card-text">
+                                O relacionamento alterna entre fases de tensão, explosão (agressão) e a "lua de mel" (arrependimento e promessas), o que dificulta a saída da vítima.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Invasão de Privacidade -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-user-secret fa-lg text-primary"></i>
+                                </div>
+                                <h2 class="card-title h5 fw-bold mb-0">Stalking Digital</h2>
+                            </div>
+                            <p class="card-text">
+                                Lê suas mensagens e e-mails sem permissão, exige senhas de redes sociais, instala aplicativos espiões ou persegue você através da localização do celular.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Seção de Ação: Contato com Psicóloga -->
+            <div class="mt-5 p-4 rounded bg-white border border-primary border-opacity-25 shadow-sm" style="background: linear-gradient(to right, rgba(var(--bs-primary-rgb), 0.05), rgba(255,255,255,0));">
+                <div class="d-flex flex-column flex-md-row align-items-center justify-content-between text-center text-md-start">
+                    <div class="mb-3 mb-md-0 pe-md-4">
+                        <h4 class="fw-bold text-primary mb-2"><i class="fas fa-headset me-2"></i>Identificou algum desses sinais?</h4>
+                        <p class="mb-0 text-secondary">
+                            Você não precisa enfrentar isso sozinha. O Krav Maga Woman oferece um canal direto de acolhimento com uma <strong>psicóloga especializada</strong> da Federação Gaúcha de Krav Maga. O atendimento é sigiloso e focado no seu bem-estar.
+                        </p>
+                    </div>
+                    <!-- Botão de WhatsApp Direto -->
+                    <a href="https://wa.me/5551999999999?text=Olá,%20acessei%20o%20Krav%20Maga%20Woman%20e%20gostaria%20de%20conversar%20sobre%20sinais%20de%20alerta." target="_blank" class="btn btn-success btn-lg px-4 py-3 shadow-sm d-flex align-items-center gap-2 transition-all hover-scale">
+                        <i class="fab fa-whatsapp fa-lg"></i>
+                        <span>Falar com Psicóloga</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+<!-- ======================= PÁGINA DE SUPORTE E ACOLHIMENTO ======================= -->
+
+        <section id="support-page" class="page-section container py-4">
+            <!-- Cabeçalho -->
+            <div class="text-center mb-5">
+               <!-- <div class="badge bg-primary bg-opacity-10 text-primary mb-2 px-3 py-2 rounded-pill fw-semibold">Rede de Apoio</div> --> 
+                <h1 class="display-5 fw-bold" style="color: var(--bs-primary);">Assistência e Suporte à Mulher</h1>
+                <p class="lead mx-auto text-body" style="max-width: 800px;">
+                    Você não está sozinha. Conheça os canais de denúncia, acolhimento e orientação jurídica disponíveis para garantir seus direitos e sua segurança.
+                </p>
+            </div>
+
+            <!-- Seção de Emergência (Prioridade Alta) -->
+            <div class="row g-4 mb-5">
+                <div class="col-12">
+                    <h3 class="h5 fw-bold text-danger mb-3 border-start border-4 border-danger ps-3">Canais de Emergência e Denúncia</h3>
+                </div>
+                
+                <!-- 190: Emergência Policial -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all border-top border-4 border-danger">
+                        <div class="card-body p-4 d-flex align-items-start">
+                            <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3 flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                                <i class="fas fa-phone-alt fa-xl text-danger"></i>
+                            </div>
+                            <div>
+                                <h4 class="card-title h5 fw-bold mb-1 text-danger">Polícia Militar - 190</h4>
+                                <p class="text-body mb-3 fs-6">Para situações de <strong>emergência imediata</strong>, risco de vida, agressão em andamento ou flagrante delito. O atendimento é 24 horas.</p>
+                                <a href="tel:190" class="btn btn-danger btn-sm px-4 py-2 fw-bold rounded-pill"><i class="fas fa-phone me-2"></i>Ligar 190 Agora</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 180: Central de Atendimento -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm hover-lift transition-all border-top border-4 border-primary">
+                        <div class="card-body p-4 d-flex align-items-start">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                                <i class="fas fa-female fa-xl text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="card-title h5 fw-bold mb-1 text-primary">Central da Mulher - 180</h4>
+                                <p class="text-body mb-3 fs-6">Serviço nacional, gratuito e confidencial. Oferece escuta qualificada, informações sobre leis e encaminhamento para a rede de proteção.</p>
+                                <a href="tel:180" class="btn btn-primary btn-sm px-4 py-2 fw-bold rounded-pill"><i class="fas fa-phone me-2"></i>Ligar 180</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Outros Canais da Rede de Proteção -->
+            <div class="mb-5">
+                <h3 class="h5 fw-bold text-body mb-3 ps-3 border-start border-4 border-secondary">Outros Órgãos de Proteção</h3>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    <!-- Defensoria -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-secondary bg-opacity-10 p-2 rounded-circle me-2">
+                                        <i class="fas fa-balance-scale text-secondary fa-lg"></i>
+                                    </div>
+                                    <h5 class="fw-bold mb-0 text-body">Defensoria Pública</h5>
+                                </div>
+                                <p class="text-body mb-3">Assistência jurídica gratuita para orientação sobre divórcio, guarda, pensão e solicitação de medidas protetivas de urgência.</p>
+                                <a href="https://www.defensoria.rs.def.br/" target="_blank" class="btn btn-outline-secondary btn-sm w-100 rounded-pill text-body fw-semibold">Buscar Unidade</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Casa da Mulher -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-secondary bg-opacity-10 p-2 rounded-circle me-2">
+                                        <i class="fas fa-home text-secondary fa-lg"></i>
+                                    </div>
+                                    <h5 class="fw-bold mb-0 text-body">Casa da Mulher</h5>
+                                </div>
+                                <p class="text-body mb-3">Centros integrados que reúnem delegacia, juizado, ministério público e apoio psicossocial em um único local.</p>
+                                <a href="https://www.gov.br/mulheres/pt-br/acesso-a-informacao/casa-da-mulher-brasileira" target="_blank" class="btn btn-outline-secondary btn-sm w-100 rounded-pill text-body fw-semibold">Saiba Mais</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Disque 100 -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-secondary bg-opacity-10 p-2 rounded-circle me-2">
+                                        <i class="fas fa-comment-dots text-secondary fa-lg"></i>
+                                    </div>
+                                    <h5 class="fw-bold mb-0 text-body">Disque 100</h5>
+                                </div>
+                                <p class="text-body mb-3">Canal de Direitos Humanos. Recebe denúncias de violações contra grupos vulneráveis, incluindo violência doméstica.</p>
+                                <a href="tel:100" class="btn btn-outline-secondary btn-sm w-100 rounded-pill text-body fw-semibold">Ligar 100</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botão de Geolocalização -->
+     <div class="text-center py-5 bg-white rounded-3 border border-dashed shadow-sm">
+        <h4 class="h5 fw-bold text-primary mb-3">Precisa de atendimento presencial?</h4>
+        <!-- SUBSTITUIÇÃO: Usando <a> em vez de <button> para evitar conflitos de script e duplicação -->
+        <a href="https://www.google.com/maps/search/delegacia+da+mulher+perto+de+mim" target="_blank" rel="noopener noreferrer" id="findSupportNearMeButton" class="btn btn-primary btn-lg px-5 py-3 rounded-pill hover-scale shadow-sm transition-all text-decoration-none d-inline-flex align-items-center justify-content-center">
+            <i class="fas fa-map-marker-alt me-2"></i>Encontrar Delegacia (DEAM) Mais Próxima
+        </a>
+        <!-- Texto ajustado -->
+        <p class="text-secondary mt-3 mb-0 fs-6 fw-medium"><i class="fas fa-info-circle me-1"></i>Utiliza sua localização atual para encontrar o posto de ajuda mais perto de você.</p>
+    </div>
+    </section>
+
+    </main>
+
+    <!-- ====== RODAPÉ DA APLICAÇÃO ====== -->
+    <footer class="text-center p-4 mt-5">
+        <p class="small mb-1">© <span id="currentYear"></span> Krav Maga Woman. Todos os direitos reservados.</p>
+        <p class="small opacity-75">Este aplicativo é uma ferramenta de apoio e informação. Em caso de perigo real, contate as autoridades.</p>
+    </footer>
+    
+    <!-- ====== BOTÃO FLUTUANTE DO WHATSAPP ====== -->
+    <a id="whatsapp-float-button" href="https://wa.me/5511999999999?text=Ol%C3%A1%2C%20vi%20o%20site%20Krav%20Maga%20Woman%20e%20gostaria%20de%20agendar%20uma%20conversa%20com%20a%20psic%C3%B3loga." class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Agendar conversa com psicóloga no WhatsApp" style="display: none;">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    
+    <!-- ====== CONTAINER PARA NOTIFICAÇÃO PROATIVA ====== -->
+    <div id="instructor-prompt-container" style="position: fixed; bottom: 1.25rem; left: 1.25rem; z-index: 1040; width: 100%; max-width: 320px;"></div>
+
+    <!-- ====== SCRIPTS EXTERNOS ====== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- ====== CONFIGURAÇÃO INICIAL (pré-módulo) ====== -->
+    <script>
+    // Anexa as variáveis de configuração ao objeto global 'window'
+    window.__firebase_config_str = `{
+        "apiKey": "AIzaSyBfVieHjJ9lq8sYnhn4J4AhWi4W7cx9cYk",
+        "authDomain": "krav-maga-woman.firebaseapp.com",
+        "databaseURL": "https://krav-maga-woman-default-rtdb.firebaseio.com/",
+        "projectId": "krav-maga-woman",
+        "storageBucket": "krav-maga-woman.appspot.com",
+        "messagingSenderId": "970804139681",
+        "appId": "1:970804139681:web:d27e7f113a85b9b6e82a3b"
+    }`;
+    window.__app_id_val = 'krav-maga-woman';
+</script>
+<!-- 
+    ===================================================================================
+    CORREÇÃO APLICADA ABAIXO:
+    - Adicionada a tag <script> para carregar o 'main.js'.
+    - 'type="module"' é essencial porque 'main.js' usa 'import'.
+    - O caminho 'js/main.js' assume que o arquivo está na pasta 'js'.
+    ===================================================================================
+-->
+<script type="module" src="js/main.js"></script>
+
+
+</body>
+</html>
+
