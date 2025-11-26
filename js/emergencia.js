@@ -324,7 +324,9 @@ function getHaversineDistance(coords1, coords2) {
 
 function handleLocationUpdate(pos) {
     const now = Date.now();
-    const MIN_UPDATE_INTERVAL_MS = 10000; // 10 segundos
+    
+    // AJUSTE PARA APRESENTAÇÃO: Reduzido de 10s para 1s para garantir que o tracker receba dados constantemente
+    const MIN_UPDATE_INTERVAL_MS = 1000; // 1 segundos
     const MIN_UPDATE_DISTANCE_METERS = 20; // 20 metros
 
     const { latitude, longitude, accuracy, heading, speed } = pos.coords;
