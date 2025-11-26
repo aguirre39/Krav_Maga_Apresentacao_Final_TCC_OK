@@ -31,7 +31,7 @@ const db = getDatabase(app);
 // Chave da API Gemini
 //const GEMINI_API_KEY = "AIzaSyCuW9pV8J01XxnZjHFyvqv0nKnPLtVXXrE"; 
 //const GEMINI_API_KEY = "AIzaSyCv7vTWBIYPqF9qw3nM7f5Y5fYbT4bV-Xo";
-const GEMINI_API_KEY = "AIzaSyBgTsrl7A51hVo4P8eHfMx0iFM98l1carY";
+const GEMINI_API_KEY = "AIzaSyAu2Uk6-70n7HxgoKzRLa3K90T33msO_KA";
 
 
 // Detalhes das técnicas (usado pelo módulo de anotações)
