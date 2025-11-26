@@ -799,25 +799,32 @@ async function notifyContactsViaCallMeBot(trackingLink) {
                     validContactsFound++;
                     notificationPromises.push(sendCallMeBotTelegram(contact.detail, msg));
                 }
-                // --- INÍCIO DA MODIFICAÇÃO: Bloco WhatsApp ativado ---
+                // --- MODIFICAÇÃO: Bloco unificado para múltiplos WhatsApps ---
                 else if (contact && contact.detail && isValidPhone(contact.detail.replace(/\D/g, ''))) {
                     const cleanedPhone = contact.detail.replace(/\D/g, ''); // Remove máscara e caracteres
 
-                    // Verifica se o número é o seu, para o qual você tem a API Key
+                    // Verifica se o número é o primeiro (Original)
                     if (cleanedPhone === '51984672843') {
-                        const YOUR_PHONE_NUMBER_WITH_COUNTRY_CODE = '555184672843';
-                        const YOUR_API_KEY = '9113901'; // Sua API Key aqui
-
-                        console.log(`Número de WhatsApp correspondente encontrado: ${cleanedPhone}. Enviando notificação.`);
+                        const PHONE = '555184672843';
+                        const API = '9113901'; 
+                        console.log(`WhatsApp 1 (51984672843) encontrado. Enviando notificação.`);
                         validContactsFound++;
-                        notificationPromises.push(sendCallMeBotWhatsapp(YOUR_PHONE_NUMBER_WITH_COUNTRY_CODE, YOUR_API_KEY, msg));
-                    } else {
-                        console.warn(`Contato ${contact.name} (${contact.detail}) é um telefone, mas não corresponde ao número configurado com API Key. Pulando WhatsApp.`);
+                        notificationPromises.push(sendCallMeBotWhatsapp(PHONE, API, msg));
+                    } 
+                    // Verifica se o número é o segundo (Novo)
+                    else if (cleanedPhone === '51991980074') {
+                        const PHONE = '555191980074';
+                        const API = '5939520';
+                        console.log(`WhatsApp 2 (51991980074) encontrado. Enviando notificação.`);
+                        validContactsFound++;
+                        notificationPromises.push(sendCallMeBotWhatsapp(PHONE, API, msg));
+                    }
+                    else {
+                        console.warn(`Contato ${contact.name} (${contact.detail}) é um telefone, mas não corresponde a nenhum número configurado com API Key. Pulando WhatsApp.`);
                     }
                 }
-                // --- FIM DA MODIFICAÇÃO ---
                 else {
-                    console.log(`Contato ${contact.name} (${contact.detail}) ignorado (não é Telegram @usuario nem o telefone configurado).`);
+                    console.log(`Contato ${contact.name} (${contact.detail}) ignorado (não é Telegram @usuario nem telefone válido).`);
                 }
             });
 
@@ -849,6 +856,7 @@ async function notifyContactsViaCallMeBot(trackingLink) {
 // ===================================================================================
 // --- FIM DA FUNCIONALIDADE CALLMEBOT ---
 // ===================================================================================
+
 
 
 // --- Lógica de Contatos de Confiança (Gerenciamento Local) ---
