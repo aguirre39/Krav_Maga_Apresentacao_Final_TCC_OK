@@ -35,22 +35,26 @@
         #status-banner.lost { background-color: #ffc107; color: #333; }
         #status-banner.anomaly { background-color: #fd7e14; color: #fff; }
         
-        /* Botão Centralizar Mapa */
+       /* Botão Centralizar Mapa - ALINHADO COM ZOOM */
         #recenter-map-btn {
             position: absolute;
-            bottom: 30px; right: 20px;
+            /* Ajustado para ficar acima dos controles de zoom (que ocupam ~70px na parte inferior) */
+            bottom: 90px; 
+            right: 5px; /* Ajustado para 5px para centralizar com o zoom padrão (que tem margem 10px e largura menor) */
             z-index: 1000;
             background: white;
-            border: none;
+            border: 2px solid rgba(0,0,0,0.2); /* Borda sutil para combinar com controles do mapa */
             border-radius: 50%;
-            width: 50px; height: 50px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            width: 44px; /* Tamanho ajustado para melhor alinhamento visual */
+            height: 44px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.4);
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             color: #333;
-            transition: transform 0.2s;
+            transition: transform 0.2s, background-color 0.2s;
         }
-        #recenter-map-btn:active { transform: scale(0.95); }
+        #recenter-map-btn:active { transform: scale(0.95); background-color: #f0f0f0; }
+        
         
         /* Timestamp da Última Atualização */
         #last-update-timestamp {
